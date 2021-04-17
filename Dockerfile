@@ -41,7 +41,7 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
    cd $BLOND_DIR && \
    $PYTHON -m pip install --upgrade pip setuptools wheel && \
    $PYTHON -m pip install -r requirements.txt && \
-   $PYTHON blond/compile.py -p --with-fftw --with-fftw-threads -gpu
+   $PYTHON blond/compile.py -p --with-fftw --with-fftw-threads
 
 COPY ./input_files $BLOND_DIR/__EXAMPLES/input_files/
 
