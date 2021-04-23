@@ -6,18 +6,22 @@ ENV HOME="/root/" \
     BLOND_DIR="$HOME/git/blond" \
     INSTALL_DIR="$HOME/install" \
     VIRTUAL_ENV="$HOME/venv" \
-    PYTHON="python3.7"
+    PYTHON="python3.7" \
+    TZ="Europe/Athens"
 
 WORKDIR $HOME
 
+
 # COPY .bashrc .git-completion.bash .git-prompt.sh $HOME/
 # COPY cuda_10.1.105_418.39_linux.run $HOME/
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update -y && \
 apt-get -yq --no-install-suggests --no-install-recommends install apt-utils build-essential mpich libmpich-dev libfftw3-dev vim wget git \
-    software-properties-common curl && \
+    software-properties-common curl systemd htop && \
 add-apt-repository ppa:deadsnakes/ppa && \
 apt-get update -y && apt-get -yq --no-install-suggests --no-install-recommends install $PYTHON-dev
+
 
 # RUN cd $HOME && sh cuda_10.1.105_418.39_linux.run --toolkit --silent --samples
 
@@ -39,7 +43,7 @@ RUN apt-get -yq install $PYTHON-dev
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     $PYTHON get-pip.py && \
    cd $BLOND_DIR && \
-   $PYTHON -m pip install --upgrade pip setuptools wheel && \
+   $PYTHON -m pip install --upgrade pip setuptools wheel pyyaml && \
    $PYTHON -m pip install -r requirements.txt && \
    $PYTHON blond/compile.py -p --with-fftw --with-fftw-threads -gpu
 
