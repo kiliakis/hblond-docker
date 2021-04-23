@@ -4,25 +4,27 @@ FROM 172.9.0.240:5000/evolve-zeppelin-gpu:0.9.0.4.3
 USER root
 
 ENV HOME="/root/" \
-    BLOND_DIR="$HOME/git/blond" \
-    INSTALL_DIR="$HOME/install" \
-    PYTHON="python3"
+    BLOND_DIR="/root/git/blond" \
+    INSTALL_DIR="/root/install" \
+    PYTHON="python3.7"
 
 WORKDIR $HOME
 
 
 # COPY .bashrc .git-completion.bash .git-prompt.sh $HOME/
-# COPY cuda_10.1.105_418.39_linux.run $HOME/
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get update -y && \
-apt-get -yq --no-install-suggests --no-install-recommends install apt-utils build-essential mpich libmpich-dev libfftw3-dev vim wget git \
-    software-properties-common curl htop systemd python3 python3-dev
-#add-apt-repository ppa:deadsnakes/ppa && \
-#apt-get update -y && apt-get -yq --no-install-suggests --no-install-recommends install $PYTHON-dev
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
+    apt-get update -y && \
+    apt-get -yq --no-install-suggests --no-install-recommends install apt-utils \
+    gcc-7 g++-7 build-essential mpich libmpich-dev libfftw3-dev vim wget git \
+    software-properties-common curl htop systemd
 
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
-# RUN cd $HOME && sh cuda_10.1.105_418.39_linux.run --toolkit --silent --samples
+COPY ./cuda_10.1.105_418.39_linux.run $HOME/
+
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 1 \
+    --slave /usr/bin/g++ g++ /usr/bin/g++-7 && \
+    cd $HOME && sh cuda_10.1.105_418.39_linux.run --toolkit --silent --samples
 
 # RUN $PYTHON -m pip install virtualenv
 # RUN $PYTHON -m virtualenv --python=/usr/bin/$PYTHON $VIRTUAL_ENV
@@ -40,14 +42,12 @@ RUN mkdir $HOME/git && cd $HOME/git && \
 
 
 COPY ./pymodules $HOME/git/pymodules/
+COPY ./input_files $BLOND_DIR/__EXAMPLES/input_files/
 
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-    $PYTHON get-pip.py && \
-   cd $BLOND_DIR && \
+RUN cd $BLOND_DIR && \
    $PYTHON -m pip install --upgrade pip setuptools wheel pyyaml && \
    $PYTHON -m pip install -r requirements.txt && \
    $PYTHON blond/compile.py -p --with-fftw --with-fftw-threads -gpu
 
-COPY ./input_files $BLOND_DIR/__EXAMPLES/input_files/
 
 #ENTRYPOINT ["/bin/sleep", "365d"]
