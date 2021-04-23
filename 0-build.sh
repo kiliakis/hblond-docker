@@ -1,1 +1,1 @@
-docker build -t kiliakis/blond:1.0 .
+docker build -t kiliakis/hblond:1.1 .

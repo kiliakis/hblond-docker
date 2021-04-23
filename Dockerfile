@@ -1,13 +1,12 @@
-FROM nvidia/cuda:10.1-devel-ubuntu18.04
+# FROM nvidia/cuda:10.1-devel-ubuntu18.04
+FROM 172.9.0.240:5000/evolve-zeppelin-gpu:0.9.0.4.3
 
 USER root
 
 ENV HOME="/root/" \
     BLOND_DIR="$HOME/git/blond" \
     INSTALL_DIR="$HOME/install" \
-    VIRTUAL_ENV="$HOME/venv" \
-    PYTHON="python3" \
-    TZ="Europe/Athens"
+    PYTHON="python3"
 
 WORKDIR $HOME
 
@@ -51,7 +50,4 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
 
 COPY ./input_files $BLOND_DIR/__EXAMPLES/input_files/
 
-#ENV LD_LIBRARY_PATH=$HOME/install/lib
-#ENV PATH=$HOME/install/bin:$PATH
-#ENV PYTHONPATH=$BLOND_DIR:$HOME/git/pymodules:$HOME/git:$PYTHONPATH
-ENTRYPOINT ["/bin/sleep", "365d"]
+#ENTRYPOINT ["/bin/sleep", "365d"]

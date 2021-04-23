@@ -1,3 +1,3 @@
-docker run --privileged --cpus 20 --gpus all \
+docker run --privileged --cpus 0 --gpus all \
     -v "$(pwd)"/results:/root/results/ \
-    --rm -it --name blond-1.0 kiliakis/blond:1.0
+    --rm -it --name hblond-1.1 kiliakis/hblond:1.1
